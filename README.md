@@ -1,4 +1,6 @@
-# vue-iot-project
+# VueJS-Dashboard-Tasks
+
+[gh-pages link](https://josuetc94.github.io/VueJS-Dashboard-Tasks/)
 
 ## Project setup
 ```
