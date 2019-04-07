@@ -29,51 +29,29 @@ export default {
                 "not_finished": [
                     {
                         "id": 0,
-                        "title": "Elemento 1",
-                        "subtitle": "Subtítulo del elemento 1",
-                        "description": "Descripción del elemento 1",
-                        "img": ["element_1.jpg"],
-                        "tags": ["biología", "máxima prioridad", "50 % nota"]
+                        "title": "Terminar el Proyecto de Vue",
+                        "description": "Dashboard para gestionar tus tareas",
+                        "tags": ["Subir link al campus", "máxima prioridad", "40 % nota final"]
                     },
                     {
                         "id": 1,
-                        "title": "Elemento 2",
-                        "subtitle": "Subtítulo del elemento 2",
-                        "tags": []
+                        "title": "Subir a repo",
+                        "description": "Github",
+                        "tags": ["Comprobar SSH keys"]
                     },
                     {
                         "id": 2,
-                        "title": "Elemento 3",
-                        "subtitle": "Subtítulo del elemento 3",
-                        "tags": []
-                    },
-                    {
-                        "id": 3,
-                        "title": "Elemento 4",
-                        "subtitle": "Subtítulo del elemento 1",
-                        "description": "Descripción del elemento 1",
-                        "img": ["element_1.jpg"],
-                        "tags": []
-                    },
-                    {
-                        "id": 4,
-                        "title": "Elemento 5",
-                        "subtitle": "Subtítulo del elemento 2",
-                        "tags": []
-                    },
-                    {
-                        "id": 5,
-                        "title": "Elemento 6",
-                        "subtitle": "Subtítulo del elemento 3",
-                        "tags": []
+                        "title": "Comprar entradas avengers",
+                        "description": "",
+                        "tags": ["15 €"]
                     }
                 ],
                 "finished":[
                     {
-                        "id": 6,
-                        "title": "Elemento 6",
-                        "subtitle": "Subtítulo del elemento 3",
-                        "tags": []
+                        "id": 3,
+                        "title": "BrainStorming ideas para el proyecto",
+                        "description": "",
+                        "tags": ["Gestor de tareas", "Panel de control de dispositivos"]
                     }
                 ]
             }
@@ -83,16 +61,20 @@ export default {
         'list-element': ListElement,
         'element-preview': ElementPreview
     },
-    methods: {}
+    methods: {
+        getNewId(listType){
+            let index = 0;
+            this.elements[listType].map((e) => {
+                if(e.id > index)
+                    index = e.id;
+            });
+            return index;
+        }
+    }
 }
 </script>
 
 <style lang="scss">
-$color1: rgba(0, 30, 66, 1);
-$color2: rgba(52, 119, 188, 1);
-$color3: rgba(247, 245, 242, 1);
-$color4: rgba(219, 202, 173, 1);
-$color5: rgba(172, 150, 104, 1);
 #list-elements{
     display: flex;
     flex-direction: row;
@@ -100,7 +82,7 @@ $color5: rgba(172, 150, 104, 1);
     padding: 20px;
     margin-top: 20px;
     #list-elements-to-do, #list-elements-done{
-        flex: 0.5;
+        flex: 1;
     }
     .list-elements-container{
         display: flex;
@@ -110,7 +92,6 @@ $color5: rgba(172, 150, 104, 1);
         align-items: center;
         width: 100%;
         padding: 10px 20px 10px 0px;
-        // border: 1px dashed $color1;
         overflow: hidden;
     }
 }

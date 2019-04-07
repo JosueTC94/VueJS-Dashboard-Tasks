@@ -1,16 +1,11 @@
 <template>
-import { close } from 'fs';
     <div id="element-preview-container">
         <div id="form-add-event" v-if="ifSelectedElement == false">
             <h2>Añadir nueva tarea:</h2>
             <form>
                 <div class="form-group">
-                    <label :for="newElement.title">Título: </label>
-                    <input :id="newElement.title" v-model.lazy="newElement.title"/>
-                </div>
-                <div class="form-group">
-                    <label :for="newElement.title">Subtítulo: </label>
-                    <input v-model.lazy="newElement.subtitle" />
+                    <label for="add-element-title">Título: </label>
+                    <input id="add-element-title" v-model.lazy="newElement.title"/>
                 </div>
                 <div class="form-group">
                     <label :for="newElement.description"> Descripción: </label>
@@ -20,24 +15,20 @@ import { close } from 'fs';
                     <label for="element-date">Fecha:</label>
                     <input type="datetime-local" id="element-date" name="element-date" v-model="newElement.date"/>
                 </div>
-                <div class="form-group">
-                    <label :for="newElement.img">Añadir imágenes: </label>
-                    <input :id="newElement.img" type="file" multiple/>
-                </div>
-                 <div class="form-group form-group-checkbox">
+                 <div class="form-group form-group-tags">
                     <span>Etiquetas:</span>
-                    <div class="checkbox-container">
-                        <div v-for="(tag,i) in newElement.tags" :key="i">
-                            <input type="checkbox" :value="tag" checked>
-                            {{tag}}
-                        </div>
-                    </div>
+                    <ul class="tags-container">
+                        <li v-for="(tag,i) in newElement.tags" :key="i">{{ tag }}</li>
+                    </ul>
                 </div>
                 <div class="form-group">
                     <input type="text" placeholder="Nueva etiqueta" v-model.lazy="newTag"/>
                     <input type="button" value="Añadir" @click="addTag"/>
                 </div>
-                <div class="form-group">
+                <div class="form-group form-group-buttons">
+                    <span id="add-event-info" v-if="newElement.title == undefined || (newElement.title != undefined && newElement.title.trim().length < 1)">
+                        Introduzca, como mínimo, el título de la tarea
+                    </span>
                     <input type="button" value="Añadir"  @click="addEvent"/>
                 </div>
             </form>
@@ -50,37 +41,24 @@ import { close } from 'fs';
                     <input :id="selectedElement.content.title" v-model.lazy="selectedElement.content.title"/>
                 </div>
                 <div class="form-group">
-                    <label :for="selectedElement.content.subtitle"> Subtítulo: </label>
-                    <input v-model.lazy="selectedElement.content.subtitle" />
-                </div>
-                <div class="form-group">
                     <label :for="selectedElement.content.description"> Descripción: </label>
                     <textarea v-model.lazy="selectedElement.content.description"></textarea>
                 </div>
                 <div class="form-group">
                     Finalizada:
-                    <input type="radio" name="element-state" value="true"  v-model="selectedElement.finished">Si
-                    <input type="radio" name="element-state" value="false" v-model="selectedElement.finished">No
+                    <input type="radio" name="element-state" value="true"  v-model="selectedElement.finished" @click="changeState(true)">Si
+                    <input type="radio" name="element-state" value="false" v-model="selectedElement.finished" @click="changeState(false)">No
                 </div>
                 <div class="form-group">
                     <label for="element-date">Fecha:</label>
                     <input type="datetime-local" id="element-date" name="element-date" v-model="selectedElement.content.date"/>
                 </div>
                 <div class="separator"></div>
-                <!-- <div class="form-group">
-                    <label :for="selectedElement.img">Imágenes: </label>
-                    <div :id="selectedElement.img" class="img-container">
-                        <img v-for="(e,i) in selectedElement.content.img" :key="i" :src="getImage(e)" />
-                    </div>
-                </div> -->
-                <div class="form-group form-group-checkbox">
+                <div class="form-group form-group-tags">
                     <span>Etiquetas:</span>
-                    <div class="checkbox-container">
-                        <div v-for="(tag,i) in selectedElement.content.tags" :key="i">
-                            <input type="checkbox" :value="tag" checked>
-                            {{tag}}
-                        </div>
-                    </div>
+                    <ul class="tags-container">
+                        <li v-for="(tag,i) in selectedElement.content.tags" :key="i">{{ tag }}</li>
+                    </ul>
                 </div>
                 <div class="form-group">
                     <input type="text" placeholder="Nueva etiqueta" v-model.lazy="newTag"/>
@@ -114,13 +92,12 @@ export default {
                 type: String
             },
             newTag: {
-                type: String,
-                default: ''
+                type: String
             }
         }
     },
     mounted(){
-        console.log("ifSelectedElement => " + JSON.stringify(this.ifSelectedElement));
+        this.newTag = '';
     },
     methods: {
         setElement(task, id, finished){
@@ -130,51 +107,32 @@ export default {
             this.selectedElement.finished = String(finished);
             this.ifSelectedElement = true;
         },
-        getImage(rute){
-            var images = require.context('../assets/', false);
-            return images('./'+rute);
-        },
         updateEvent(){
-            console.log("updateEvent => " + this.selectedElement.finished + "ifFinished => " + this.ifFinished);
             let index = -1;
             if(this.ifFinished.localeCompare("false") == 0){
-                
                 index = this.$parent.elements.not_finished.findIndex(e => e.id == this.selectedElement.content.id);
-                console.log("!this.selectedElement.finished => " + index + ", element content => " + JSON.stringify(this.selectedElement.content));
-                if(this.selectedElement.finished.localeCompare(this.ifFinished) == 0){
-                    this.$parent.elements.not_finished[index] = this.selectedElement.content
-                }else{
-                    console.log("else 1:"+JSON.stringify(this.selectedElement))
-                    this.$parent.elements.finished.push(this.selectedElement.content)
-                    this.$parent.elements.not_finished.splice(this.$parent.elements.not_finished.findIndex(e => e.id == this.selectedElement.content.id), 1)
-                }   
+                this.$parent.elements.not_finished[index] = this.selectedElement.content 
             } else {
-
                 index = this.$parent.elements.finished.findIndex(e => e.id == this.selectedElement.content.id);
-                console.log("this.selectedElement.finished => " + index + ", element content => " + JSON.stringify(this.selectedElement.content));
-
-                if(this.selectedElement.finished.localeCompare(this.ifFinished) == 0){
-                    this.$parent.elements.finished[index] = this.selectedElement.content;
-                }else{
-                    console.log("else 2:"+JSON.stringify(this.selectedElement))
-                    this.$parent.elements.not_finished.push(this.selectedElement.content);
-                    this.$parent.elements.finished.splice(this.$parent.elements.finished.findIndex(e => e.id == this.selectedElement.content.id), 1);
-                }
+                this.$parent.elements.finished[index] = this.selectedElement.content;
             }
             this.selectedElement = {};
             this.ifSelectedElement = false;
         },
         cancelUpdate(){
-            // console.log("cancelUpdate");
             this.selectedElement = {};
             this.ifSelectedElement = false;
         },
         addEvent(){
-            // console.log("addEvent");
-            this.$parent.elements.not_finished.push(this.newElement);
+            if(this.newElement.title != undefined && this.newElement.title.trim().length > 0){
+                this.newElement.id = this.$parent.getNewId('not_finished') + 1;
+                this.$parent.elements.not_finished.push(this.newElement)
+            }else{   
+                document.querySelector('#add-element-title').style.borderColor = "red";
+            }
+            this.newElement = {};
         },
         removeEvent(){
-            console.log("removeEvent => " + this.selectedElement.content.id);
             this.ifFinished.localeCompare("false") == 0 ? 
                 this.$parent.elements.not_finished.splice(this.$parent.elements.not_finished.findIndex(e => e.id == this.selectedElement.content.id), 1)
                 :
@@ -184,21 +142,34 @@ export default {
             this.ifSelectedElement = false;
         },
         addTag(){
-            if(this.selectedElement != undefined && Object.keys(this.selectedElement).length > 0){
+            if(this.ifSelectedElement){
                 this.selectedElement.content.tags != undefined &&
                     this.selectedElement.content.tags.push(this.newTag);
             }else{
-                this.newElement.tags != undefined ?
-                    this.newElement.tags.push(this.newTag)
-                    :
-                    console.log("tags  == undefined")
+                if(this.newElement.tags != undefined){
+                    this.newTag.length > 0 && this.newElement.tags.push(this.newTag)
+                }else{
                     this.newElement.tags = [];
-                    this.newElement.tags.push(this.newTag);
+                    this.newTag.length > 0 && this.newElement.tags.push(this.newTag)
+                }
             }
             
             this.newTag = "";
-
-            console.log(this.selectedElement.content.tags);
+        },
+        changeState(finished){
+            if(this.ifFinished.localeCompare(String(finished)) != 0){
+                let index = -1;
+                if(finished){
+                    index = this.$parent.elements.not_finished.findIndex(e => e.id == this.selectedElement.content.id);
+                    this.$parent.elements.finished.push(this.selectedElement.content)
+                    this.$parent.elements.not_finished.splice(index, 1)
+                }else{
+                    index = this.$parent.elements.finished.findIndex(e => e.id == this.selectedElement.content.id);
+                    this.$parent.elements.not_finished.push(this.selectedElement.content);
+                    this.$parent.elements.finished.splice(index, 1);
+                }
+                this.ifFinished = String(finished);
+            }
         }
     }
 }
@@ -243,18 +214,21 @@ export default {
             input[type='button']{
                 flex: 1;
             }
+            span#add-event-info{
+                margin-bottom: 10px;
+            }
         }
-        .form-group-checkbox{
+        .form-group-tags{
             align-items: flex-start;
             span {
                 flex-basis: 30%;
             }
-            div.checkbox-container{
+            ul.checkbox-container{
                 flex-basis: 70%;
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 flex-wrap: wrap;
-                justify-content: space-between;
+                justify-content: flex-start;
             }
         }
         .form-group-buttons{
@@ -263,7 +237,7 @@ export default {
                 border: 0;
                 margin-bottom: 5px;
             }
-            input[value='Actualizar']{
+            input[value='Actualizar'], input[value='Añadir']{
                 flex-basis: 100%;
                 background: rgba(52, 119, 188, 1);
                 color: rgba(247, 245, 242, 1);
@@ -271,9 +245,13 @@ export default {
             input[value='Borrar']{
                 flex-basis: 55%;
                 margin-right: 1%;
+                background: #e53935;
+                color: rgba(247, 245, 242, 1)
             }
             input[value='Cancelar']{
                 flex-basis: 40%;
+                background: #757575;
+                color: rgba(247, 245, 242, 1);
             }
         }
         input[type='button']:hover{

@@ -2,13 +2,13 @@
     <div class="list-element-container" @click="showDetail()">
         <span class="element-title">{{ element.title }}</span>
         <div class="separator"></div>
-        <span class="element-subtitle">{{ element.subtitle }}</span>
+        <span class="element-subtitle">{{ element.description }}</span>
         <ul class="tags-container">
             <li v-for="(tag,i) in element.tags" :key="i">{{ tag }}</li>
         </ul>
         <div class="element-date" v-if="element.date != undefined">
             <font-awesome-icon icon="calendar-alt" />
-            <span>{{ element.date }}</span>
+            <span>{{ element.date  | parseDate }}</span>
         </div>
     </div>
 </template>
@@ -40,6 +40,9 @@ export default {
             // console.log(this.numid);
             this.preview.setElement(this.element, this.element.id, this.finished);
         }
+    },
+    filters: {
+        parseDate: date => new Date(date).toUTCString()
     }
 }
 </script>
@@ -72,9 +75,12 @@ $color5: rgba(172, 150, 104, 1);
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        justify-content: space-evenly;
+        justify-content: flex-start;
         align-items: center;
         margin-top: 5%;
+        span{
+            margin-left: 10px;
+        }
     }
     ul.tags-container{
         margin-left: 20px;

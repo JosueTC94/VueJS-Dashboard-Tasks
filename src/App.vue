@@ -1,8 +1,5 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/>
-    <hr> -->
     <div class="header">
         <h1>{{ title }}</h1>
     </div>
@@ -11,7 +8,6 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 import Vue from 'vue'
 import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.min.css';
@@ -44,10 +40,7 @@ export default {
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css?family=Montserrat');
 $color1: rgba(0, 30, 66, 1);
-$color2: rgba(52, 119, 188, 1);
-$color3: rgba(247, 245, 242, 1);
-$color4: rgba(219, 202, 173, 1);
-$color5: rgba(172, 150, 104, 1);
+$color2: rgba(247, 245, 242, 1);
 *{
   margin: 0;
   padding: 0;
@@ -64,11 +57,12 @@ $color5: rgba(172, 150, 104, 1);
 }
 .header{
     background-color: $color1;
-    padding: 10px;
+    padding: 30px;
+    h1 {
+      color: $color2;
+      text-align: center;
+      font-size: 1.7em;
+    }
 }
-h1 {
-    color: $color3;
-    text-align: center;
-    font-size: 1.5em;
-}
+
 </style>
