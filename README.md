@@ -1,6 +1,6 @@
 # VueJS-Dashboard-Tasks
 
-[gh-pages link](https://josuetc94.github.io/VueJS-Dashboard-Tasks/)
+[Click on this link to go to the gh-pages link!](https://josuetc94.github.io/VueJS-Dashboard-Tasks/)
 
 ## Project setup
 ```
